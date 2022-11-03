@@ -1,8 +1,11 @@
-import { CheckCircle, ClipboardText, Trash } from "phosphor-react";
+import { CheckCircle } from "phosphor-react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import Logo from "./assets/Logo.png";
+import { Header } from "./components/Header";
+import { Todos } from "./components/Todos";
+import { TodosEmpty } from "./components/TodosEmpty";
+import { TodosInfo } from "./components/TodosInfo";
 
-interface Todo {
+export interface Todo {
 	id: string;
 	task: string;
 	isCompleted: boolean;
@@ -63,9 +66,7 @@ export function App() {
 
 	return (
 		<>
-			<header className="flex h-52 items-center justify-center bg-neutral-900">
-				<img src={Logo} alt="" />
-			</header>
+			<Header />
 
 			<main className="h-screen bg-zinc-800">
 				<div className="mx-auto md:w-1/2">
@@ -82,62 +83,25 @@ export function App() {
 							<CheckCircle size={20} weight="bold" />
 						</button>
 					</form>
-					<div className="mt-10 flex items-center justify-between border-b border-neutral-700 py-8">
-						<p className="text-base font-bold text-sky-600">
-							Tarefas criadas{" "}
-							<span className="rounded-full bg-neutral-700 px-3 text-neutral-100">
-								{todosLength}
-							</span>
-						</p>
-						<p className="text-base font-bold text-indigo-500">
-							Concluídas{" "}
-							<span className="rounded-full bg-neutral-700 px-3 text-neutral-100">
-								{remainingTodos} de {todosLength}
-							</span>
-						</p>
-					</div>
+
+					<TodosInfo
+						todosLength={todosLength}
+						remainingTodos={remainingTodos}
+					/>
 
 					{hasTodos ? (
 						<ul>
 							{todos.map((todo) => (
-								<li
+								<Todos
+									todo={todo}
 									key={todo.id}
-									className="mb-4 flex items-start justify-between rounded-lg bg-neutral-700 p-4 text-base text-neutral-100"
-								>
-									<div className="flex">
-										<input
-											className="form-checkbox mr-4 mt-1 h-6 w-6 rounded-full border-2 border-sky-600 bg-transparent text-indigo-500 hover:border-sky-700 hover:text-indigo-400 focus:outline-none"
-											type="checkbox"
-											id={todo.id}
-											checked={todo.isCompleted}
-											onChange={() => handleCheckboxInput(todo.id)}
-										/>
-										<label
-											htmlFor={todo.id}
-											className={
-												todo.isCompleted ? "text-neutral-400 line-through" : ""
-											}
-										>
-											{todo.task}
-										</label>
-									</div>
-									<button
-										className="mt-1 text-neutral-400 hover:text-red-600"
-										onClick={() => handleDeleteTodo(todo.id)}
-									>
-										<Trash size={24} />
-									</button>
-								</li>
+									handleDeleteTodo={handleDeleteTodo}
+									handleCheckboxInput={handleCheckboxInput}
+								/>
 							))}
 						</ul>
 					) : (
-						<div className="mt-20 flex flex-col items-center justify-center text-center text-base text-neutral-400">
-							<ClipboardText size={56} />
-							<p className="mt-8 font-bold">
-								Você ainda não tem tarefas cadastradas.
-							</p>
-							<p>Crie tarefas e organize seus itens a fazer.</p>
-						</div>
+						<TodosEmpty />
 					)}
 				</div>
 			</main>
